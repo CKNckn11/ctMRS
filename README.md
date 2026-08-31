@@ -1,0 +1,82 @@
+# ctMRS
+
+`ctMRS` is an R package for integrating paired single-cell RNA/ATAC data,
+transcription-factor motifs, and cohort somatic mutations. It builds a
+full-genome TF-peak-gene regulatory network and calculates cell-type
+specificity (CTS), mutation gene-regulatory scores (MGRS), and a combined
+mutation regulatory score (MRS).
+
+## Workflow
+
+```text
+RNA + ATAC + motif -> TF-peak-gene global GRN -> cell-type sub-GRNs -> CTS
+somatic variants -> cohort recurrence -> mutated ATAC peaks -> MGRS
+CTS + MGRS - discordance penalty -> MRS -> matched-control Monte Carlo P/FDR
+```
+
+Mutation relevance is based on `log(1 + number of mutated samples)`.
+Functional annotations are retained for description and are not assigned
+manual impact weights.
+
+## Installation
+
+```r
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+remotes::install_github("CKNckn11/ctMRS")
+library(ctMRS)
+```
+
+## Required inputs
+
+- A single-cell RNA Seurat object or RDS file.
+- A single-cell ATAC Signac/Seurat object or RDS file containing a peak assay
+  and motif annotations.
+- GRCh38 gene annotation as a `GRanges` object or RDS file.
+- A tab-delimited somatic-mutation table containing genomic coordinates,
+  alleles, functional annotations, and sample identifiers.
+
+## Example
+
+```r
+fit <- run_ctMRS(
+  rna = "path/to/rna_object.rds",
+  atac = "path/to/atac_object_with_motifs.rds",
+  gene_annotation = "path/to/grch38_gene_annotation.rds",
+  mutations = "path/to/somatic_mutations.tsv",
+  output_dir = "path/to/ctMRS_results",
+  celltype_column = "celltype",
+  min_recurrent_samples = 1L,
+  mutation_peak_buffer = 0L,
+  perm_n = 1000L,
+  seed = 1234L
+)
+```
+
+Use `perm_n = 10000L` or more for a final analysis. The primary analysis can
+retain `min_recurrent_samples = 1L`, because recurrence enters continuously
+through `log1p(n_samples)`.
+
+## Main functions
+
+- `prepare_ctMRS_inputs()` pairs RNA/ATAC cells and extracts matrices.
+- `calculate_gene_cts()` calculates gene cell-type specificity.
+- `extract_tf_peak()` maps JASPAR motifs to TF-peak pairs.
+- `link_peaks_genes()` computes full-genome RNA-ATAC peak-gene correlations.
+- `build_global_grn()` builds the TF-peak-gene network.
+- `build_celltype_subgrn()` calculates cell-type-specific regulatory edges.
+- `calculate_mutation_relevance()` maps mutations to peaks and scores them.
+- `calculate_target_mgrs()` calculates edge- and target-level MGRS.
+- `score_eregulons()` calculates CTS, MGRS, and MRS.
+- `test_eregulons_mc()` calculates empirical P values and FDR.
+- `run_ctMRS()` runs the complete workflow.
+
+## Author
+
+Kangnan Chen (`CKNckn11`)  
+GitHub: https://github.com/CKNckn11
+
+## License
+
+MIT

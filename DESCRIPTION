@@ -1,0 +1,33 @@
+Package: ctMRS
+Type: Package
+Title: Single-Cell Multi-Omics Mutation Regulatory Scoring
+Version: 0.1.0
+Authors@R: person("Kangnan", "Chen", role = c("aut", "cre"),
+    email = "105203580+CKNckn11@users.noreply.github.com")
+Description: Builds full-genome transcription-factor--peak--gene regulatory
+    networks from paired single-cell RNA and ATAC data, integrates recurrent
+    somatic mutations at accessible peaks, and calculates cell-type
+    specificity (CTS), mutation gene-regulatory scores (MGRS), and combined
+    mutation regulatory scores (MRS) with matched-control Monte Carlo tests.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.3.0)
+Imports:
+    data.table,
+    GenomicRanges,
+    IRanges,
+    Matrix,
+    S4Vectors,
+    Seurat,
+    SeuratObject,
+    Signac,
+    stringr,
+    stats,
+    utils
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0
+URL: https://github.com/CKNckn11/ctMRS
+BugReports: https://github.com/CKNckn11/ctMRS/issues
