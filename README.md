@@ -6,37 +6,31 @@ full-genome TF-peak-gene regulatory network and calculates cell-type
 specificity (CTS), mutation gene-regulatory scores (MGRS), and a combined
 mutation regulatory score (MRS).
 
-![ctMRS plasma ctDNA mutation profiling](example/figure/Fig1A.png)
+ctMRS assumes that recurrent plasma ctDNA mutations can be interpreted in
+their cellular regulatory context by linking them to accessible chromatin
+regions and TF-centered gene-regulatory programs. The framework first
+characterizes the cohort-level ctDNA mutation landscape, then integrates
+paired single-cell RNA-seq and ATAC-seq profiles with TF motif information to
+construct a global TF-peak-gene network and resolve cell type-specific
+eRegulons. Recurrent ctDNA variants are mapped to accessible regulatory peaks
+and connected to candidate target genes through peak-gene associations.
+Cell-type specificity (CTS) and mutation-associated gene-regulatory relevance
+(MGRS) are subsequently integrated into the mutation-associated regulon score
+(MRS). Matched Monte Carlo permutations are used to estimate empirical P
+values and false-discovery rates and to prioritize significant
+mutation-associated eRegulons.
 
-**Figure 1A. Plasma ctDNA mutation profiling.** Plasma cell-free DNA (cfDNA)
-is collected and subjected to somatic variant detection with Mutect2. The
-resulting circulating tumor DNA (ctDNA) variants are summarized across samples
-to characterize the cohort-level mutation landscape.
-
-![ctMRS single-cell regulatory network construction](example/figure/Fig1B.png)
-
-**Figure 1B. Construction of cell type-specific regulatory networks.** Paired
-single-cell RNA-seq and ATAC-seq profiles are integrated with transcription
-factor motif information to construct a global TF-peak-gene regulatory
-network. The global network is subsequently resolved into cell type-specific
-TF-centered eRegulons and used to calculate cell-type specificity (CTS).
+The required inputs include paired single-cell RNA-seq and ATAC-seq data, TF
+motif annotations, a GRCh38 gene annotation, and a cohort-level somatic
+mutation table containing genomic coordinates and sample identifiers.
 
 ## Workflow
 
-The framework maps recurrent ctDNA variants to accessible regulatory regions,
-links regulatory peaks to target genes, and combines cell-type specificity with
-mutation-associated regulatory relevance. Matched Monte Carlo permutations are
-used to prioritize significant mutation-associated eRegulons.
+![Plasma ctDNA mutation profiling](example/figure/Fig1A.png)
 
-![ctMRS scoring and permutation framework](example/figure/Fig1C.png)
+![Cell type-specific regulatory network construction](example/figure/Fig1B.png)
 
-**Figure 1C. ctMRS scoring and significance assessment.** Recurrent ctDNA
-variants are mapped to accessible chromatin peaks, and peak-gene associations
-link mutation-bearing regulatory regions to their candidate target genes.
-Mutation-associated gene-regulatory scores (MGRS) are integrated with CTS to
-calculate the final mutation-associated regulon score (MRS). Matched Monte
-Carlo permutations generate empirical P values and false-discovery rates for
-prioritizing significant mutation-associated eRegulons.
+![ctMRS scoring and matched-permutation workflow](example/figure/Fig1C.png)
 
 ```text
 RNA + ATAC + motif -> TF-peak-gene global GRN -> cell-type sub-GRNs -> CTS
