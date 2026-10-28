@@ -171,6 +171,16 @@ through `log1p(n_samples)`.
 | `score_eregulons()` | Integrates CTS and MGRS to calculate the mutation-associated regulon score. |
 | `test_eregulons_mc()` | Performs matched Monte Carlo testing and calculates empirical P values and FDR. |
 
+## Related tools
+
+1. [cfDNA Mutect2 Pipeline Generator](https://github.com/CKNckn11/cfDNA_Mutect2_generator)
+
+   This companion tool generates configurable tumor-only cfDNA somatic variant
+   calling workflows, including Mutect2 calling, contamination estimation,
+   variant filtering, ANNOVAR annotation, and final mutation-table aggregation.
+   The aggregated annotated mutation table can be used as the somatic-mutation
+   input for ctMRS.
+
 ## Author
 
 Kangnan Chen (`CKNckn11`)  
