@@ -67,7 +67,9 @@ somatic variants -> cohort recurrence -> mutated ATAC peaks -> MGRS
 CTS + MGRS - discordance penalty -> MRS -> matched-control Monte Carlo P/FDR
 ```
 
-## Installation
+## Installing ctMRS
+
+We recommend installing ctMRS from GitHub using `remotes`:
 
 ```r
 if (!requireNamespace("remotes", quietly = TRUE)) {
@@ -76,6 +78,10 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
 remotes::install_github("CKNckn11/ctMRS")
 library(ctMRS)
 ```
+
+See the `DESCRIPTION` file for the complete list of R dependencies. If all
+dependencies are already installed, package installation should finish within
+a few minutes.
 
 ## Required inputs
 
@@ -86,20 +92,62 @@ library(ctMRS)
 - A tab-delimited somatic-mutation table containing genomic coordinates,
   alleles, functional annotations, and sample identifiers.
 
-## Example
+## How to run ctMRS
 
 ```r
+#@' Main function
+#@' rna: Seurat RNA object or path to an RNA RDS file
+#@' atac: Seurat/Signac ATAC object or path to an ATAC RDS file with motifs
+#@' gene_annotation: GRCh38 gene annotation as a GRanges object or RDS path
+#@' mutations: ANNOVAR multianno mutation table or input file path
+#@' output_dir: Directory used to save intermediate and final results
+#@' rna_assay: RNA assay name, default set to "RNA"
+#@' peak_assay: Chromatin-accessibility assay name, default set to "ATAC"
+#@' celltype_column: Metadata column containing cell-type annotations
+#@' variable_genes: Number of highly variable genes, default set to 5,000
+#@' peak_gene_distance: Maximum peak-to-TSS distance, default set to 500 kb
+#@' correlation_chunk_size: Number of peak-gene pairs processed per chunk
+#@' min_peak_gene_cor: Minimum positive peak-gene correlation, default 0.05
+#@' max_peak_gene_fdr: Maximum BH-adjusted peak-gene FDR, default 0.05
+#@' min_targets_per_tf: Minimum target genes required per TF, default 5
+#@' cell_edge_quantile: Within-eRegulon edge quantile retained, default 0.5
+#@' mutation_peak_buffer: Peak extension used for mutation mapping, default 0 bp
+#@' min_recurrent_samples: Minimum exact-variant recurrence, default 1 sample
+#@' theta: Target-node contribution to CTS, default set to 0.5
+#@' top_n: Number of strongest target-level MGRS values averaged, default 5
+#@' perm_n: Number of matched Monte Carlo permutations, default 1,000
+#@' seed: Random seed for reproducible permutation analysis, default 1,234
+#@' control_pool_n: Maximum number of matched control eRegulons, default 50
+#@' min_control_pool: Minimum size-matched control pool, default 20
+#@' nominal_p: Nominal empirical MRS P-value threshold, default 0.05
+#@' fdr_cutoff: Global MRS false-discovery-rate threshold, default 0.05
+
 fit <- run_ctMRS(
   rna = "path/to/rna_object.rds",
   atac = "path/to/atac_object_with_motifs.rds",
   gene_annotation = "path/to/grch38_gene_annotation.rds",
   mutations = "path/to/somatic_mutations.tsv",
   output_dir = "path/to/ctMRS_results",
+  rna_assay = "RNA",
+  peak_assay = "ATAC",
   celltype_column = "celltype",
-  min_recurrent_samples = 1L,
+  variable_genes = 5000L,
+  peak_gene_distance = 500000L,
+  correlation_chunk_size = 2000L,
+  min_peak_gene_cor = 0.05,
+  max_peak_gene_fdr = 0.05,
+  min_targets_per_tf = 5L,
+  cell_edge_quantile = 0.5,
   mutation_peak_buffer = 0L,
+  min_recurrent_samples = 1L,
+  theta = 0.5,
+  top_n = 5L,
   perm_n = 1000L,
-  seed = 1234L
+  seed = 1234L,
+  control_pool_n = 50L,
+  min_control_pool = 20L,
+  nominal_p = 0.05,
+  fdr_cutoff = 0.05
 )
 ```
 
@@ -109,17 +157,19 @@ through `log1p(n_samples)`.
 
 ## Main functions
 
-- `prepare_ctMRS_inputs()` pairs RNA/ATAC cells and extracts matrices.
-- `calculate_gene_cts()` calculates gene cell-type specificity.
-- `extract_tf_peak()` maps JASPAR motifs to TF-peak pairs.
-- `link_peaks_genes()` computes full-genome RNA-ATAC peak-gene correlations.
-- `build_global_grn()` builds the TF-peak-gene network.
-- `build_celltype_subgrn()` calculates cell-type-specific regulatory edges.
-- `calculate_mutation_relevance()` maps mutations to peaks and scores them.
-- `calculate_target_mgrs()` calculates edge- and target-level MGRS.
-- `score_eregulons()` calculates CTS, MGRS, and MRS.
-- `test_eregulons_mc()` calculates empirical P values and FDR.
-- `run_ctMRS()` runs the complete workflow.
+| Function | Description |
+|---|---|
+| `run_ctMRS()` | Runs the complete ctMRS workflow and returns intermediate and final results. |
+| `prepare_ctMRS_inputs()` | Pairs RNA and ATAC cells, validates cell-type annotations, and extracts the required matrices. |
+| `calculate_gene_cts()` | Calculates cell-type specificity scores for TFs and target genes. |
+| `extract_tf_peak()` | Maps stored TF motif matches to accessible chromatin peaks. |
+| `link_peaks_genes()` | Calculates full-genome associations between peak accessibility and gene expression. |
+| `build_global_grn()` | Integrates TF-peak motif relationships with peak-gene associations to construct the global regulatory network. |
+| `build_celltype_subgrn()` | Resolves the global network into cell type-specific regulatory edges. |
+| `calculate_mutation_relevance()` | Maps recurrent somatic mutations to accessible peaks and calculates peak-level mutation relevance. |
+| `calculate_target_mgrs()` | Calculates mutation-associated regulatory scores at the edge and target-gene levels. |
+| `score_eregulons()` | Integrates CTS and MGRS to calculate the mutation-associated regulon score. |
+| `test_eregulons_mc()` | Performs matched Monte Carlo testing and calculates empirical P values and FDR. |
 
 ## Author
 
