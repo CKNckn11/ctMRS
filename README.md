@@ -6,7 +6,22 @@ full-genome TF-peak-gene regulatory network and calculates cell-type
 specificity (CTS), mutation gene-regulatory scores (MGRS), and a combined
 mutation regulatory score (MRS).
 
+![ctMRS plasma ctDNA mutation profiling](example/figure/Fig1A.png)
+
+ctMRS first characterizes the plasma ctDNA mutation landscape, then integrates
+paired single-cell transcriptomic and chromatin-accessibility profiles to
+construct cell type-specific TF-centered regulatory networks.
+
+![ctMRS single-cell regulatory network construction](example/figure/Fig1B.png)
+
 ## Workflow
+
+The framework maps recurrent ctDNA variants to accessible regulatory regions,
+links regulatory peaks to target genes, and combines cell-type specificity with
+mutation-associated regulatory relevance. Matched Monte Carlo permutations are
+used to prioritize significant mutation-associated eRegulons.
+
+![ctMRS scoring and permutation framework](example/figure/Fig1C.png)
 
 ```text
 RNA + ATAC + motif -> TF-peak-gene global GRN -> cell-type sub-GRNs -> CTS
