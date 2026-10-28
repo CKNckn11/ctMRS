@@ -26,21 +26,46 @@ mutation table containing genomic coordinates and sample identifiers.
 
 ## Workflow
 
-![Plasma ctDNA mutation profiling](example/figure/Fig1A.png)
+### Plasma ctDNA mutation profiling
 
-![Cell type-specific regulatory network construction](example/figure/Fig1B.png)
+Plasma cfDNA is analyzed with Mutect2 to identify somatic variants and
+characterize the cohort-level ctDNA mutation landscape. Mutation relevance is
+based on `log(1 + number of mutated samples)`. Functional annotations are
+retained for description and are not assigned manual impact weights.
 
-![ctMRS scoring and matched-permutation workflow](example/figure/Fig1C.png)
+<p align="center">
+  <img src="example/figure/Fig1A.png" alt="Plasma ctDNA mutation profiling" width="100%">
+</p>
+
+### Cell type-specific regulatory network construction
+
+Paired single-cell RNA-seq and ATAC-seq profiles are integrated with TF motif
+annotations and peak-gene associations to construct a global TF-peak-gene
+regulatory network. The global network is resolved into cell type-specific
+TF-centered eRegulons and used to quantify cell-type specificity (CTS).
+
+<p align="center">
+  <img src="example/figure/Fig1B.png" alt="Cell type-specific regulatory network construction" width="100%">
+</p>
+
+### Mutation-associated regulon scoring and significance testing
+
+Recurrent ctDNA variants are mapped to accessible chromatin peaks and linked
+to candidate target genes. Mutation-associated gene-regulatory relevance
+(MGRS) is integrated with CTS to calculate the final mutation-associated
+regulon score (MRS). Matched Monte Carlo permutations generate empirical P
+values and false-discovery rates for prioritizing significant
+mutation-associated eRegulons.
+
+<p align="center">
+  <img src="example/figure/Fig1C.png" alt="ctMRS scoring and matched-permutation workflow" width="68%">
+</p>
 
 ```text
 RNA + ATAC + motif -> TF-peak-gene global GRN -> cell-type sub-GRNs -> CTS
 somatic variants -> cohort recurrence -> mutated ATAC peaks -> MGRS
 CTS + MGRS - discordance penalty -> MRS -> matched-control Monte Carlo P/FDR
 ```
-
-Mutation relevance is based on `log(1 + number of mutated samples)`.
-Functional annotations are retained for description and are not assigned
-manual impact weights.
 
 ## Installation
 
